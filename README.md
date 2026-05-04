@@ -110,6 +110,28 @@ Agent: 현재 파일 컨텍스트를 읽고 33번 라인에 함수 구현을 삽
 Agent: editor scroll API 또는 VSCode command를 호출해 화면을 아래로 이동합니다.
 ```
 
-## 현재 상태
+## 현재 구현 상태
 
-현재는 프로젝트 방향과 아키텍처를 정리하는 초기 단계입니다. 다음 단계는 VSCode Extension scaffold를 만들고, 가장 작은 VSCode API tool set부터 Agno Agent에 연결하는 것입니다.
+VSCode Extension scaffold와 가장 작은 Agent 실행 루프가 구현되어 있습니다.
+
+- `Voice Agent: Open Command Panel`: 텍스트 명령 입력과 브라우저 Web Speech API 기반 음성 입력 패널을 엽니다.
+- `Voice Agent: Run Text Command`: VSCode input box에서 명령을 입력해 즉시 실행합니다.
+- `Voice Agent: Show Current Context`: 현재 파일, 선택 영역, diagnostics, workspace 정보를 JSON으로 보여줍니다.
+- `Voice Agent: Show External Input QR`: 향후 모바일/외부 음성 입력 연결을 위한 QR 패널을 보여줍니다.
+
+지원하는 기본 명령 예시는 다음과 같습니다.
+
+- `main.py 열어`
+- `새파일.js 만들어`
+- `화면 천천히 아래로 내려봐`
+- `잠깐 화면 크게 보여줘`
+- `33번 라인에 validate_user 함수 추가해`
+- `터미널에서 npm test 실행`
+
+## 실행 방법
+
+```bash
+npm test
+```
+
+VSCode에서 이 폴더를 열고 Extension Development Host로 실행한 뒤 Command Palette에서 `Voice Agent` 명령을 실행합니다.

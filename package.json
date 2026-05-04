@@ -1,0 +1,60 @@
+{
+  "name": "voice-agent",
+  "displayName": "Voice Agent",
+  "description": "Control VSCode with Korean natural-language and voice commands.",
+  "version": "0.1.0",
+  "publisher": "local",
+  "private": true,
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./src/extension.js",
+  "activationEvents": [
+    "onCommand:voiceAgent.openPanel",
+    "onCommand:voiceAgent.runCommand",
+    "onCommand:voiceAgent.showContext",
+    "onCommand:voiceAgent.connectExternalInput"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "voiceAgent.openPanel",
+        "title": "Voice Agent: Open Command Panel"
+      },
+      {
+        "command": "voiceAgent.runCommand",
+        "title": "Voice Agent: Run Text Command"
+      },
+      {
+        "command": "voiceAgent.showContext",
+        "title": "Voice Agent: Show Current Context"
+      },
+      {
+        "command": "voiceAgent.connectExternalInput",
+        "title": "Voice Agent: Show External Input QR"
+      }
+    ],
+    "configuration": {
+      "title": "Voice Agent",
+      "properties": {
+        "voiceAgent.autonomousMode": {
+          "type": "boolean",
+          "default": true,
+          "description": "Run recognized commands immediately without confirmation."
+        },
+        "voiceAgent.externalInputUrl": {
+          "type": "string",
+          "default": "http://localhost:4317/voice-agent",
+          "description": "URL shown as a QR code for future mobile or external voice input flows."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "test": "node test/agent.test.js",
+    "package:check": "node -e \"JSON.parse(require('fs').readFileSync('package.json','utf8')); console.log('package.json ok')\""
+  }
+}
