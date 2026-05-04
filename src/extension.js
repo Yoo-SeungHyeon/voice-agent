@@ -1,6 +1,7 @@
 "use strict";
 
 const { parseVoiceCommand } = require("./agent");
+const { planWithPython } = require("./pythonBridge");
 const { VscodeToolLayer } = require("./toolLayer");
 
 let statusBar;
@@ -18,25 +19,25 @@ function activate(vscodeContext) {
   vscodeContext.subscriptions.push(
     statusBar,
     vscode.commands.registerCommand("voiceAgent.openPanel", () => openPanel(vscode, vscodeContext, tools)),
-    vscode.commands.registerCommand("voiceAgent.runCommand", () => promptAndRun(vscode, tools)),
+    vscode.commands.registerCommand("voiceAgent.runCommand", () => promptAndRun(vscode, vscodeContext, tools)),
     vscode.commands.registerCommand("voiceAgent.showContext", () => showContext(vscode, tools)),
     vscode.commands.registerCommand("voiceAgent.connectExternalInput", () => showExternalInput(vscode))
   );
 }
 
-async function promptAndRun(vscode, tools) {
+async function promptAndRun(vscode, vscodeContext, tools) {
   const command = await vscode.window.showInputBox({
     title: "Voice Agent",
     prompt: "실행할 자연어 명령을 입력하세요.",
     placeHolder: "예: main.py 열어, 33번 라인에 validate_user 함수 추가해"
   });
   if (command) {
-    await runAgentCommand(vscode, tools, command);
+    await runAgentCommand(vscode, vscodeContext, tools, command);
   }
 }
 
-async function runAgentCommand(vscode, tools, command) {
-  const plan = parseVoiceCommand(command);
+async function runAgentCommand(vscode, vscodeContext, tools, command) {
+  const plan = await getCommandPlan(vscode, vscodeContext, command);
   if (plan.kind !== "tool-plan") {
     vscode.window.showWarningMessage(`Voice Agent: ${plan.summary}`);
     return plan;
@@ -56,6 +57,15 @@ async function runAgentCommand(vscode, tools, command) {
     setStatus("$(error) Voice Agent");
     vscode.window.showErrorMessage(`Voice Agent failed: ${error.message}`);
     return { plan, error };
+  }
+}
+
+async function getCommandPlan(vscode, vscodeContext, command) {
+  try {
+    return await planWithPython(vscode, vscodeContext, command);
+  } catch (error) {
+    vscode.window.showWarningMessage(`Python planner unavailable; using JS fallback: ${error.message}`);
+    return parseVoiceCommand(command);
   }
 }
 
@@ -110,7 +120,7 @@ function openPanel(vscode, vscodeContext, tools) {
     if (message.type !== "run" || !message.command) {
       return;
     }
-    const result = await runAgentCommand(vscode, tools, message.command);
+    const result = await runAgentCommand(vscode, vscodeContext, tools, message.command);
     panel.webview.postMessage({
       type: "result",
       payload: summarizeRunResult(result)

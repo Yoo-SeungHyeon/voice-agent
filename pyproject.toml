@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "voice-agent"
+version = "0.2.0"
+description = "Agno-based Python agent bridge for controlling VSCode with natural-language voice commands."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "agno>=2.6,<3"
+]
+
+[project.optional-dependencies]
+dev = []
+
+[project.scripts]
+voice-agent = "voice_agent.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["voice_agent*"]

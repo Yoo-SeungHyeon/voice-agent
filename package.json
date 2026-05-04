@@ -1,8 +1,8 @@
 {
   "name": "voice-agent",
   "displayName": "Voice Agent",
-  "description": "Control VSCode with Korean natural-language and voice commands.",
-  "version": "0.1.0",
+  "description": "Control VSCode with a Python/Agno natural-language voice agent.",
+  "version": "0.2.0",
   "publisher": "local",
   "private": true,
   "engines": {
@@ -49,12 +49,19 @@
           "type": "string",
           "default": "http://localhost:4317/voice-agent",
           "description": "URL shown as a QR code for future mobile or external voice input flows."
+        },
+        "voiceAgent.pythonPath": {
+          "type": "string",
+          "default": "python",
+          "description": "Python executable used to run the Agno voice-agent bridge."
         }
       }
     }
   },
   "scripts": {
-    "test": "node test/agent.test.js",
+    "test": "node test/agent.test.js && python -m unittest discover -s tests",
+    "test:js": "node test/agent.test.js",
+    "test:py": "python -m unittest discover -s tests",
     "package:check": "node -e \"JSON.parse(require('fs').readFileSync('package.json','utf8')); console.log('package.json ok')\""
   }
 }
